@@ -6,6 +6,7 @@ exports.model =
   wheel: 3
   x: 0
   y: 0
+  area: {}
   getScale: ->
     @wheel / 3
 
@@ -14,7 +15,7 @@ exports.model =
     if @wheel < 3 then @wheel = 3
     else if @wheel > (3 * T) then @wheel = (3 * T)
     console.log @getScale()
-    
+
   move: (p) ->
     @x += p.x
     @y += p.y

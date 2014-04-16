@@ -1,20 +1,25 @@
 
-canvas = document.querySelector '#canvas'
-context = canvas.getContext '2d'
 
 {model} = require './model'
 {view} = require './view'
 
 view.start()
 
-resize = ->
+canvas = document.querySelector '#canvas'
+
+do resize = ->
   canvas.setAttribute 'width', innerWidth
   canvas.setAttribute 'height', innerHeight
+  model.area =
+    cx: innerWidth / 2
+    cy: innerHeight / 2
+    w: innerWidth
+    h: innerHeight
 
-do resize
 window.addEventListener 'resize', resize
 
 canvas.addEventListener 'mousewheel', (event) ->
+  event.preventDefault()
   model.grow event.deltaY
 
 drag =
@@ -23,12 +28,13 @@ drag =
   y: 0
 
 canvas.addEventListener 'mousedown', (event) ->
+  event.preventDefault()
   drag.during.x = event.offsetX
   drag.during.y = event.offsetY
   drag.during = yes
 
 canvas.addEventListener 'mousemove', (event) ->
-  return unless dragging
+  return unless drag.during
   model.move
     x: event.offsetX - drag.x
     y: event.offsetY - drag.y
@@ -36,4 +42,5 @@ canvas.addEventListener 'mousemove', (event) ->
   drag.y = event.offsetY
 
 canvas.addEventListener 'mouseup', (event) ->
+  event.preventDefault()
   drag.during = no
