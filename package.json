@@ -1,0 +1,16 @@
+{
+  "name": "luoshu-grids",
+  "version": "0.0.1",
+  "description": "a zoomable space based on LuoShu as a demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jiyinyiyiyong",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^3.43.0",
+    "cirru-html": "^0.1.7",
+    "shelljs": "^0.2.6"
+  }
+}
