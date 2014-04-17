@@ -3,8 +3,6 @@
 {model} = require './model'
 {view} = require './view'
 
-view.start()
-
 canvas = document.querySelector '#canvas'
 
 do resize = ->
@@ -44,3 +42,5 @@ canvas.addEventListener 'mousemove', (event) ->
 canvas.addEventListener 'mouseup', (event) ->
   event.preventDefault()
   drag.during = no
+
+view.start()
