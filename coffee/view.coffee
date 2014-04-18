@@ -48,6 +48,7 @@ exports.view =
       @render()
       console.log 'render'
       requestAnimationFrame =>
+        # do loopRender
         f = => do loopRender
         setTimeout f, 10
 
@@ -56,13 +57,18 @@ exports.view =
       if @scale < i < (5 * @scale)
         unit = 3 ** i
         context.font = "#{unit / @scale}px Menlo"
+        context.textBaseline = 'middle'
+        context.textAlign = 'center'
         if (2.5 * @scale) < i < (3.5 * @scale)
           context.globalAlpha = 1
         else
           context.globalAlpha = 0.3
-        use =
-          x: ((model.area.cx - @x) / unit).toFixed()
-          y: ((model.area.cy - @y) / unit).toFixed()
+
+        closest =
+          xn: (@x / unit).toFixed()
+          yn: (@y / unit).toFixed()
+        closest.x = closest.xn * unit
+        closest.y = closest.yn * unit
 
         draw = (r) =>
           index =
@@ -73,34 +79,38 @@ exports.view =
           digit = digitMap[index.y][index.x]
 
           p =
-            x: model.area.cx + (r.x * unit)
-            y: model.area.cy + (r.y * unit)
+            x: model.area.cx + ((r.x * unit) - closest.x) / @scale
+            y: model.area.cy + ((r.y * unit) - closest.y) / @scale
 
           @drawDigit p, unit, digit
 
-        @walkX unit, draw
+        @walkX unit, closest, draw
 
-  walkX: (unit, callback) ->
-    x = -1
-    while (unit * (x - 1)) < ((model.area.w / 2) * @scale)
+  walkX: (unit, closest, callback) ->
+    area = model.area
+    abs = Math.abs
+    limit = area.cx * @scale
+    x = closest.xn - 1
+    while abs(unit * (x - 1) - closest.x) < limit
       x += 1
-      @walkY unit, (y) -> callback {x, y}
-    x = 0
-    while (unit * (x + 1)) > -((model.area.w / 2) * @scale)
+      @walkY unit, closest, (y) -> callback {x, y}
+    x = closest.xn
+    while abs(unit * (x + 1) - closest.x) < limit
       x -= 1
-      @walkY unit, (y) -> callback {x, y}
+      @walkY unit, closest, (y) -> callback {x, y}
 
-  walkY: (unit, callback) ->
-    y = -1
-    while (unit * (y - 1)) < ((model.area.h / 2) * @scale)
+  walkY: (unit, closest, callback) ->
+    area = model.area
+    abs = Math.abs
+    limit = area.cy * @scale
+    y = closest.yn - 1
+    while abs(unit * (y - 1) - closest.y) < limit
       y += 1
       callback y
-    y = 0
-    while (unit * (y + 1)) > -((model.area.h / 2) * @scale)
+    y = closest.yn
+    while abs(unit * (y + 1) - closest.y) < limit
       y -= 1
       callback y
 
   drawDigit: (p, unit, digit) ->
-    context.textBaseline = 'middle'
-    context.textAlign = 'center'
     context.fillText "#{digit}", p.x, p.y

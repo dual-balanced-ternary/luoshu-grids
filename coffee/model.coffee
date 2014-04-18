@@ -1,6 +1,6 @@
 
 T = 10
-R = 30
+R = 90
 M = R ** T
 
 exports.model =
