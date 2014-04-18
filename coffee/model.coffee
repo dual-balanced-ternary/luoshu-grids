@@ -5,6 +5,7 @@ M = R ** T
 
 exports.model =
   wheel: 3
+  scale: 1
   x: 0
   y: 0
   area: {}
@@ -19,8 +20,8 @@ exports.model =
     console.log @getScale()
 
   move: (p) ->
-    @x += p.x
-    @y += p.y
+    @x += p.x * @scale
+    @y += p.y * @scale
     maxW = (M / 2) / @scale
     maxH = (M / 2) / @scale
     if @x > maxW then @x = maxW

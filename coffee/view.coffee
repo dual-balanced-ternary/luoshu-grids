@@ -1,7 +1,7 @@
 
 T = 10
 M = 3 ** T
-velocity = 0.01
+velocity = 1
 
 canvas = document.querySelector '#canvas'
 context = canvas.getContext '2d'
@@ -33,7 +33,7 @@ exports.view =
         x: model.x - @x
         y: model.y - @y
         scale: model.scale - @scale
-      limit = velocity * (now - time)
+      limit = (velocity * (now - time)) * @scale * @scale
       for key, value of diff
         if (Math.abs value) > limit
           if value > 0
@@ -48,18 +48,18 @@ exports.view =
       @render()
       console.log 'render'
       requestAnimationFrame =>
-        # do loopRender
-        f = => do loopRender
-        setTimeout f, 10
+        do loopRender
+        # f = => do loopRender
+        # setTimeout f, 10
 
   render: ->
-    for i in [1..T]
-      if @scale < i < (5 * @scale)
+    for i in [1..(T + 3)]
+      if @scale < i < (6 * @scale)
         unit = 3 ** i
         context.font = "#{unit / @scale}px Menlo"
         context.textBaseline = 'middle'
         context.textAlign = 'center'
-        if (2.5 * @scale) < i < (3.5 * @scale)
+        if (2.8 * @scale) < i < (3.2 * @scale)
           context.globalAlpha = 1
         else
           context.globalAlpha = 0.3
@@ -70,6 +70,8 @@ exports.view =
         closest.x = closest.xn * unit
         closest.y = closest.yn * unit
 
+        area = model.area
+
         draw = (r) =>
           index =
             x: (mod r.x) + 1
@@ -79,8 +81,8 @@ exports.view =
           digit = digitMap[index.y][index.x]
 
           p =
-            x: model.area.cx + ((r.x * unit) - closest.x) / @scale
-            y: model.area.cy + ((r.y * unit) - closest.y) / @scale
+            x: model.area.cx + ((r.x * unit) - @x) / @scale
+            y: model.area.cy + ((r.y * unit) - @y) / @scale
 
           @drawDigit p, unit, digit
 
@@ -91,11 +93,11 @@ exports.view =
     abs = Math.abs
     limit = area.cx * @scale
     x = closest.xn - 1
-    while abs(unit * (x - 1) - closest.x) < limit
+    while abs(unit * x - closest.x) < limit
       x += 1
       @walkY unit, closest, (y) -> callback {x, y}
     x = closest.xn
-    while abs(unit * (x + 1) - closest.x) < limit
+    while abs(unit * x - closest.x) < limit
       x -= 1
       @walkY unit, closest, (y) -> callback {x, y}
 
@@ -104,11 +106,11 @@ exports.view =
     abs = Math.abs
     limit = area.cy * @scale
     y = closest.yn - 1
-    while abs(unit * (y - 1) - closest.y) < limit
+    while abs(unit * y - closest.y) < limit
       y += 1
       callback y
     y = closest.yn
-    while abs(unit * (y + 1) - closest.y) < limit
+    while abs(unit * y - closest.y) < limit
       y -= 1
       callback y
 

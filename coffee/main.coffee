@@ -27,15 +27,15 @@ drag =
 
 canvas.addEventListener 'mousedown', (event) ->
   event.preventDefault()
-  drag.during.x = event.offsetX
-  drag.during.y = event.offsetY
+  drag.x = event.offsetX
+  drag.y = event.offsetY
   drag.during = yes
 
 canvas.addEventListener 'mousemove', (event) ->
   return unless drag.during
   model.move
-    x: event.offsetX - drag.x
-    y: event.offsetY - drag.y
+    x: -(event.offsetX - drag.x)
+    y: -(event.offsetY - drag.y)
   drag.x = event.offsetX
   drag.y = event.offsetY
 
